@@ -1,0 +1,4 @@
+LICENSE
+.travis.yml
+^.*\.Rproj$
+^\.Rproj\.user$

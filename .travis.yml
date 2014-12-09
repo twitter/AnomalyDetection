@@ -1,0 +1,27 @@
+# Sample .travis.yml for R projects.
+#
+# See https://github.com/craigcitro/r-travis
+#     https://github.com/eddelbuettel/r-travis/
+
+language: c
+
+env:
+  global:
+    - _R_CHECK_FORCE_SUGGESTS_=FALSE
+
+before_install:
+  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+  - chmod 755 ./travis-tool.sh
+  - ./travis-tool.sh bootstrap
+
+install:
+  - ./travis-tool.sh install_r Rcpp ggplot2
+
+script:
+  - ./travis-tool.sh run_tests
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+
