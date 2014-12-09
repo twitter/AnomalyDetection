@@ -1,0 +1,17 @@
+Package: AnomalyDetection
+Type: Package
+Title: Anomaly Detection Using Seasonal Hybrid Extreme Studentized
+        Deviate Test
+Version: 1.0
+Date: 2014-09-24
+Author: Owen S. Vallis, Jordan Hochenbaum, Arun Kejariwal
+Maintainer: Owen S. Vallis <owensvallis@gmail.com>, Jordan Hochenbaum
+ <jhochenbaum@gmail.com>
+Description: A technique for detecting anomalies in seasonal univariate time
+    series.
+Imports: ggplot2, stringr, lubridate
+Depends: R (>= 2.10.0)
+Suggests: testthat
+License: Apache License 2.0
+LazyData: true
+Packaged: 2014-12-08 07:54:07 UTC; owenvallis
