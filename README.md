@@ -66,6 +66,7 @@ data(raw_data)
 res = AnomalyDetectionTs(raw_data, max_anoms=0.02, direction='both', plot=TRUE)
 res$plot
 ```
+https://github.com/twitter/AnomalyDetection/blob/master/figs/Fig1.png
 
 From the plot, we observe that the input time series experiences both positive 
 and negative anomalies. Furthermore, many of the anomalies in the time series
@@ -90,6 +91,8 @@ command:
 res = AnomalyDetectionTs(raw_data, max_anoms=0.02, direction='both', only_last=”day”, plot=TRUE)
 res$plot
 ```
+
+https://github.com/twitter/AnomalyDetection/blob/master/figs/Fig2.png
 
 From the plot, we observe that only the anomalies that occurred during the last
 day have been annotated. Further, the prior six days are included to expose the
