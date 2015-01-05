@@ -15,7 +15,7 @@ before_install:
   - ./travis-tool.sh bootstrap
 
 install:
-  - ./travis-tool.sh install_r Rcpp ggplot2 stringr lubridate
+  - ./travis-tool.sh install_r Rcpp ggplot2 stringr lubridate testthat
 
 script:
   - ./travis-tool.sh run_tests
