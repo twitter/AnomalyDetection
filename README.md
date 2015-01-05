@@ -103,3 +103,7 @@ of prime interest is the last day.
 Anomaly detection for long duration time series can be carried out by setting
 the longterm argument to T. 
 
+## Copyright and License
+Copyright 2015 Twitter, Inc and other contributors
+
+Licensed under the GPLv3
