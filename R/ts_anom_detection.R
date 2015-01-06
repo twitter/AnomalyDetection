@@ -71,7 +71,7 @@ AnomalyDetectionTs = function(x, max_anoms=0.10, direction='pos', alpha=0.05, on
   }
   # Rename data frame columns if necessary
   if (any((names(x) == c("timestamp", "count")) == FALSE)) {
-    colnames(x) <- c("timestamps", "count")
+    colnames(x) <- c("timestamp", "count")
   }
   
   # Sanity check all input parameters
