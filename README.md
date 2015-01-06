@@ -67,6 +67,8 @@ res = AnomalyDetectionTs(raw_data, max_anoms=0.02, direction='both', plot=TRUE)
 res$plot
 ```
 
+![Fig 1](https://github.com/twitter/AnomalyDetection/blob/master/figs/Fig1.png)
+
 From the plot, we observe that the input time series experiences both positive 
 and negative anomalies. Furthermore, many of the anomalies in the time series
 are local anomalies within the bounds of the time seriesâ€™ seasonality (hence,
@@ -91,6 +93,8 @@ res = AnomalyDetectionTs(raw_data, max_anoms=0.02, direction='both', only_last=â
 res$plot
 ```
 
+![Fig 2](https://github.com/twitter/AnomalyDetection/blob/master/figs/Fig2.png)
+
 From the plot, we observe that only the anomalies that occurred during the last
 day have been annotated. Further, the prior six days are included to expose the
 seasonal nature of the time series but are put in the background as the window
@@ -99,3 +103,7 @@ of prime interest is the last day.
 Anomaly detection for long duration time series can be carried out by setting
 the longterm argument to T. 
 
+## Copyright and License
+Copyright 2015 Twitter, Inc and other contributors
+
+Licensed under the GPLv3
