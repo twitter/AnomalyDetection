@@ -12,6 +12,6 @@ Description: A technique for detecting anomalies in seasonal univariate time
 Imports: ggplot2, stringr, lubridate
 Depends: R (>= 2.10.0)
 Suggests: testthat
-License: Apache License 2.0
+License: GPL-3
 LazyData: true
 Packaged: 2014-12-08 07:54:07 UTC; owenvallis
