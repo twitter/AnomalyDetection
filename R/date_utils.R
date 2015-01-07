@@ -25,7 +25,7 @@ format_timestamp <- function(indf, index=1) {
   }
   else if (stringr::str_detect(indf[[index]][1], "^\\d{10}$")) {
     # Handle Unix seconds in milliseconds
-    indf[[index]] <- as.POSIXlt(indf[[index]][1], origin="1970-01-01", tz="UTC")
+    indf[[index]] <- as.POSIXlt(indf[[index]], origin="1970-01-01", tz="UTC")
   }
   
   return(indf)
