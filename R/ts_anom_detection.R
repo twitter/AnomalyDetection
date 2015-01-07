@@ -125,7 +125,7 @@ AnomalyDetectionTs = function(x, max_anoms=0.10, direction='pos', alpha=0.05, on
   
   if(gran == "day"){
     num_days_per_line <- 7
-    if(!is.null(only_last) &&  only_last == 'hr'){
+    if(is.character(only_last) &&  only_last == 'hr'){
       only_last <- 'day'
     }
   } else {
