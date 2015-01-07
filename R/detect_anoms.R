@@ -14,7 +14,7 @@ detect_anoms <- function(data, k=0.49, alpha=0.05, num_obs_per_period=NULL, use_
  # Returns:
  #   A list containing the anomalies (anoms) and decomposition components (stl).
     if(is.null(num_obs_per_period)){
-        stop("must supply period length for time series deomosition")
+        stop("must supply period length for time series decomposition")
     }
     num_obs <- length(data[[2]])
 
