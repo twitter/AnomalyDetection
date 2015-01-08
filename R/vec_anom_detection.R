@@ -237,8 +237,7 @@ AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', alpha=0.05, p
       lines_at <- seq(1, length(all_data[[2]]), period)+min(all_data[[1]])
       xgraph <- ggplot2::ggplot(all_data, ggplot2::aes_string(x="timestamp", y="count")) + ggplot2::theme_bw() + ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(), text=ggplot2::element_text(size = 14))
       xgraph <- xgraph + ggplot2::geom_line(data=x_subset_previous, ggplot2::aes_string(colour=color_name), alpha=alpha*.33) + ggplot2::geom_line(data=x_subset_single_period, ggplot2::aes_string(color=color_name), alpha=alpha)    
-      yrange <- get_range(all_data, index=2)
-      xgraph <- xgraph + add_formatted_y(yrange)
+      yrange <- get_range(all_data, index=2, y_log=y_log)
       xgraph <- xgraph + ggplot2::scale_x_continuous(breaks=lines_at, expand=c(0,0))
       xgraph <- xgraph + ggplot2::geom_vline(xintercept=lines_at, color="gray60")
       xgraph <- xgraph + ggplot2::labs(x=xlabel, y=ylabel, title=plot_title)    
@@ -255,8 +254,7 @@ AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', alpha=0.05, p
       }
       xgraph <- ggplot2::ggplot(x, ggplot2::aes_string(x="timestamp", y="count")) + ggplot2::theme_bw() + ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(), text=ggplot2::element_text(size = 14))
       xgraph <- xgraph + ggplot2::geom_line(data=x, ggplot2::aes_string(colour=color_name), alpha=alpha)
-      yrange <- get_range(x, index=2)
-      xgraph <- xgraph + add_formatted_y(yrange)
+      yrange <- get_range(x, index=2, y_log=y_log)
       xgraph <- xgraph + ggplot2::scale_x_continuous(breaks=lines_at, expand=c(0,0))
       xgraph <- xgraph + ggplot2::geom_vline(xintercept=lines_at, color="gray60")
       xgraph <- xgraph + ggplot2::labs(x=xlabel, y=ylabel, title=plot_title)
@@ -270,10 +268,7 @@ AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', alpha=0.05, p
     xgraph <- xgraph + ggplot2::theme(axis.text.x=ggplot2::element_blank()) + ggplot2::theme(legend.position="none") 
     
     # Use log scaling if set by user
-    if (y_log) {
-      # print("scaling y axis to log")
-      xgraph <- xgraph + ggplot2::coord_trans(ytrans = "log10")
-    }
+    xgraph <- xgraph + add_formatted_y(yrange, y_log=y_log)
   }
   
   # Store expected values if set by user

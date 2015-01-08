@@ -286,17 +286,15 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
     if(!is.null(only_last)){
       xgraph <- ggplot2::ggplot(x_subset_week, ggplot2::aes_string(x="timestamp", y="count")) + ggplot2::theme_bw() + ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(), text=ggplot2::element_text(size = 14))
       xgraph <- xgraph + ggplot2::geom_line(data=x_subset_week, ggplot2::aes_string(colour=color_name), alpha=alpha*.33) + ggplot2::geom_line(data=x_subset_single_day, ggplot2::aes_string(color=color_name), alpha=alpha)    
-      week_rng = get_range(x_subset_week, index=2)
-      day_rng = get_range(x_subset_single_day, index=2)
+      week_rng = get_range(x_subset_week, index=2, y_log=y_log)
+      day_rng = get_range(x_subset_single_day, index=2, y_log=y_log)
       yrange = c(min(week_rng[1],day_rng[1]), max(week_rng[2],day_rng[2]))
-      xgraph <- xgraph + add_formatted_y(yrange)
       xgraph <- add_day_labels_datetime(xgraph, breaks=breaks, start=as.POSIXlt(min(x_subset_week[[1]]), tz="UTC"), end=as.POSIXlt(max(x_subset_single_day[[1]]), tz="UTC"), days_per_line=num_days_per_line)
       xgraph <- xgraph + ggplot2::labs(x=xlabel, y=ylabel, title=plot_title)    
     }else{
       xgraph <- ggplot2::ggplot(x, ggplot2::aes_string(x="timestamp", y="count")) + ggplot2::theme_bw() + ggplot2::theme(panel.grid.major = ggplot2::element_line(colour = "gray60"), panel.grid.major.y = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(), text=ggplot2::element_text(size = 14))
       xgraph <- xgraph + ggplot2::geom_line(data=x, ggplot2::aes_string(colour=color_name), alpha=alpha)
-      yrange <- get_range(x, index=2)
-      xgraph <- xgraph + add_formatted_y(yrange)
+      yrange <- get_range(x, index=2, y_log=y_log)
       xgraph <- xgraph + ggplot2::scale_x_datetime(labels=function(x) ifelse(as.POSIXlt(x, tz="UTC")$hour != 0,strftime(x, format="%kh", tz="UTC"), strftime(x, format="%b %e", tz="UTC")), 
                                                   expand=c(0,0))
       xgraph <- xgraph + ggplot2::labs(x=xlabel, y=ylabel, title=plot_title)
@@ -310,10 +308,8 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
     xgraph <- xgraph + ggplot2::theme(legend.position="none") 
     
     # Use log scaling if set by user
-    if (y_log) {
-      # print("scaling y axis to log")
-      xgraph <- xgraph + ggplot2::coord_trans(ytrans = "log10")
-    }
+    xgraph <- xgraph + add_formatted_y(yrange, y_log=y_log)
+    
   }
   
   # Store expected values if set by user
