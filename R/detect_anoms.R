@@ -15,25 +15,23 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
  #	 verbose: Additionally printing for debugging.
  # Returns:
  #   A list containing the anomalies (anoms) and decomposition components (stl).
+  
     if(is.null(num_obs_per_period)) {
         stop("must supply period length for time series decomposition")
     }
     num_obs <- length(data[[2]])
 
     # Check to make sure we have at least two periods worth of data for anomaly context
-    if(num_obs < (num_obs_per_period * 2)) {
+    if(num_obs < num_obs_per_period * 2) {
         stop("Anom detection needs at least 2 periods worth of data")
     }
 
-    posix_timestamp <- FALSE
-
     # Check if our timestamps are posix
-    if(class(data[[1]])[1] == "POSIXlt") {
-        posix_timestamp <- TRUE
-    }
+    posix_timestamp <- if (class(data[[1]])[1] == "POSIXlt") TRUE else FALSE
 
     # -- Step 1: Decompose data. This returns a univarite remainder which will be used for anomaly detection. Optionally, we might NOT decompose.
     data_decomp <- stl(ts(data[[2]], frequency=num_obs_per_period), s.window="periodic", robust=TRUE)
+    
     data <- data.frame(timestamp=data[[1]], count=(data[[2]]-data_decomp$time.series[,"seasonal"]-median(data[[2]])))
     data_decomp <- data.frame(timestamp=data[[1]], count=(as.numeric(trunc(data_decomp$time.series[,"trend"]+data_decomp$time.series[,"seasonal"]))))
     if(posix_timestamp){
