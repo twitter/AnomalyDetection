@@ -89,10 +89,10 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   if(!(0.01 <= alpha || alpha <= 0.1)){
     print("Warning: alpha is the statistical signifigance, and is usually between 0.01 and 0.1")
   }
-  if(!is.null(only_last) && all((only_last == c('day','hr')) == FALSE)){
+  if(!is.null(only_last) && !only_last %in% c('day','hr')){
     stop("only_last must be either 'day' or 'hr'")
   }
-  if(all((threshold == c('None','med_max','p95','p99')) == FALSE)){
+  if(!threshold %in% c('None','med_max','p95','p99')){
     stop("threshold options are: None | med_max | p95 | p99.") 
   }
   if(!is.logical(e_value)){
