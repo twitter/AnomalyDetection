@@ -2,28 +2,28 @@ format_timestamp <- function(indf, index = 1) {
   if (class(indf[[index]])[1] == "POSIXlt") {
     return(indf)
   }
-  if (str_detect(indf[[index]][1], "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}$")) {
+  if (stringr::str_detect(indf[[index]][1], "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}$")) {
     indf[[index]] <- strptime(indf[[index]], format="%Y-%m-%d %H:%M:%S", tz="UTC")
   }
-  else if (str_detect(indf[[index]][1], "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$")) {
+  else if (stringr::str_detect(indf[[index]][1], "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$")) {
     indf[[index]] <- strptime(indf[[index]], format="%Y-%m-%d %H:%M:%S", tz="UTC")
   }
-  else if (str_detect(indf[[index]][1], "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}$")) {
+  else if (stringr::str_detect(indf[[index]][1], "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}$")) {
     indf[[index]] <- strptime(indf[[index]], format="%Y-%m-%d %H:%M", tz="UTC")
   }
-  else if (str_detect(indf[[index]][1], "^\\d{2}/\\d{2}/\\d{2}$")) {
+  else if (stringr::str_detect(indf[[index]][1], "^\\d{2}/\\d{2}/\\d{2}$")) {
     indf[[index]] <- strptime(indf[[index]], format="%m/%d/%y", tz="UTC")
   }
-  else if (str_detect(indf[[index]][1], "^\\d{2}/\\d{2}/\\d{4}$")) {
+  else if (stringr::str_detect(indf[[index]][1], "^\\d{2}/\\d{2}/\\d{4}$")) {
     indf[[index]] <- strptime(indf[[index]], format="%m/%d/%Y", tz="UTC")
   }
-  else if (str_detect(indf[[index]][1], "^\\d{4}\\d{2}\\d{2}$")) {
+  else if (stringr::str_detect(indf[[index]][1], "^\\d{4}\\d{2}\\d{2}$")) {
     indf[[index]] <- strptime(indf[[index]], format="%Y%m%d", tz="UTC")
   }
-  else if (str_detect(indf[[index]][1], "^\\d{4}/\\d{2}/\\d{2}/\\d{2}$")) {
+  else if (stringr::str_detect(indf[[index]][1], "^\\d{4}/\\d{2}/\\d{2}/\\d{2}$")) {
     indf[[index]] <- strptime(indf[[index]], format="%Y/%m/%d/%H", tz="UTC")
   }
-  else if (str_detect(indf[[index]][1], "^\\d{10}$")) {
+  else if (stringr::str_detect(indf[[index]][1], "^\\d{10}$")) {
     # Handle Unix seconds in milliseconds
     indf[[index]] <- as.POSIXlt(indf[[index]], origin="1970-01-01", tz="UTC")
   }
