@@ -19,7 +19,8 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
     if(is.null(num_obs_per_period)) {
         stop("must supply period length for time series decomposition")
     }
-    num_obs <- length(data[[2]])
+    
+    num_obs <- nrow(data)
 
     # Check to make sure we have at least two periods worth of data for anomaly context
     if(num_obs < num_obs_per_period * 2) {
