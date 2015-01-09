@@ -28,8 +28,9 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
     posix_timestamp <- FALSE
 
     # Check if our timestamps are posix
-    if(class(data[[1]])[1] == "POSIXlt")
+    if(class(data[[1]])[1] == "POSIXlt") {
         posix_timestamp <- TRUE
+    }
 
     # -- Step 1: Decompose data. This returns a univarite remainder which will be used for anomaly detection. Optionally, we might NOT decompose.
     data_decomp <- stl(ts(data[[2]], frequency=num_obs_per_period), s.window="periodic", robust=TRUE)
@@ -105,5 +106,5 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
             num_anoms <- i
     }
 
-    return(list("anoms" = R_idx[1:num_anoms], "stl" = data_decomp))
+    return(list(anoms = R_idx[1:num_anoms], stl = data_decomp))
 }
