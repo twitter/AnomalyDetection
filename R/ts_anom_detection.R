@@ -55,7 +55,12 @@
 #' AnomalyDetectionTs(raw_data, max_anoms=0.02, direction='both', only_last="day", plot=TRUE)
 #' @seealso \code{\link{AnomalyDetectionVec}}
 #' @export
-AnomalyDetectionTs = function(x, max_anoms=0.10, direction='pos', alpha=0.05, only_last=NULL, threshold='None', e_value=F, longterm=F, plot=F, y_log=F, xlabel='', ylabel='count', title=NULL){
+#' 
+AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos', 
+                               alpha = 0.05, only_last = NULL, threshold = 'None', 
+                               e_value = FALSE, longterm = FALSE, plot = FALSE, 
+                               y_log = FALSE, xlabel = '', ylabel = 'count', 
+                               title = NULL){
   
   # Check for supported inputs types
   if(!is.data.frame(x)){
