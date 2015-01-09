@@ -83,7 +83,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   if(max_anoms > .49){
     stop(paste("max_anoms must be less than 50% of the data points (max_anoms =", round(max_anoms*length(x[[2]]), 0), " data_points =", length(x[[2]]),")."))
   }
-  if(all((direction == c('pos','neg','both')) == FALSE)){
+  if(!direction %in% c('pos', 'neg', 'both')){
     stop("direction options are: pos | neg | both.")
   }
   if(!(0.01 <= alpha || alpha <= 0.1)){
