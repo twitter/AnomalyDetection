@@ -31,10 +31,12 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
     posix_timestamp <- if (class(data[[1]])[1] == "POSIXlt") TRUE else FALSE
 
     # -- Step 1: Decompose data. This returns a univarite remainder which will be used for anomaly detection. Optionally, we might NOT decompose.
-    data_decomp <- stl(ts(data[[2]], frequency=num_obs_per_period), s.window="periodic", robust=TRUE)
+    data_decomp <- stl(ts(data[[2]], frequency = num_obs_per_period), 
+                       s.window = "periodic", robust = TRUE)
     
-    data <- data.frame(timestamp=data[[1]], count=(data[[2]]-data_decomp$time.series[,"seasonal"]-median(data[[2]])))
+    data <- data.frame(timestamp = data[[1]], count = (data[[2]]-data_decomp$time.series[,"seasonal"]-median(data[[2]])))
     data_decomp <- data.frame(timestamp=data[[1]], count=(as.numeric(trunc(data_decomp$time.series[,"trend"]+data_decomp$time.series[,"seasonal"]))))
+    
     if(posix_timestamp){
         data_decomp <- format_timestamp(data_decomp)
     }
