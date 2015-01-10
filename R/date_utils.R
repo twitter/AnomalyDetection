@@ -1,4 +1,4 @@
-format_timestamp <- function(indf, index=1) {
+format_timestamp <- function(indf, index = 1) {
   if (class(indf[[index]])[1] == "POSIXlt") {
     return(indf)
   }
@@ -34,7 +34,8 @@ format_timestamp <- function(indf, index=1) {
 get_gran = function(tsdf, index=1) {
   n = length(tsdf[[index]])
   # We calculate the granularity from the time difference between the last 2 entries (sorted)
-  gran = round(difftime(max(tsdf[[index]]),sort(tsdf[[index]], partial=n-1)[n-1], units="secs"))
+  gran = round(difftime(max(tsdf[[index]]), sort(tsdf[[index]], partial = n-1)[n-1], 
+                        units = "secs"))
   
   if (gran >= 86400) {
     return("day")

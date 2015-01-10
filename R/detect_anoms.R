@@ -1,4 +1,6 @@
-detect_anoms <- function(data, k=0.49, alpha=0.05, num_obs_per_period=NULL, use_decomp=T, use_esd=F, one_tail=T, upper_tail=T, verbose=F) {
+detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL, 
+                         use_decomp = TRUE, use_esd = FALSE, one_tail = TRUE, 
+                         upper_tail = TRUE, verbose = FALSE) {
  # Detects anomalies in a time series using S-H-ESD.
  #
  # Args:
@@ -13,26 +15,28 @@ detect_anoms <- function(data, k=0.49, alpha=0.05, num_obs_per_period=NULL, use_
  #	 verbose: Additionally printing for debugging.
  # Returns:
  #   A list containing the anomalies (anoms) and decomposition components (stl).
-    if(is.null(num_obs_per_period)){
+  
+    if(is.null(num_obs_per_period)) {
         stop("must supply period length for time series decomposition")
     }
-    num_obs <- length(data[[2]])
+    
+    num_obs <- nrow(data)
 
     # Check to make sure we have at least two periods worth of data for anomaly context
-    if(num_obs < (num_obs_per_period*2)){
+    if(num_obs < num_obs_per_period * 2) {
         stop("Anom detection needs at least 2 periods worth of data")
     }
 
-    posix_timestamp <- F
-
     # Check if our timestamps are posix
-    if(class(data[[1]])[1] == "POSIXlt")
-        posix_timestamp <- T
+    posix_timestamp <- if (class(data[[1]])[1] == "POSIXlt") TRUE else FALSE
 
     # -- Step 1: Decompose data. This returns a univarite remainder which will be used for anomaly detection. Optionally, we might NOT decompose.
-    data_decomp <- stl(ts(data[[2]], frequency=num_obs_per_period), s.window="periodic", robust=TRUE)
-    data <- data.frame(timestamp=data[[1]], count=(data[[2]]-data_decomp$time.series[,"seasonal"]-median(data[[2]])))
+    data_decomp <- stl(ts(data[[2]], frequency = num_obs_per_period), 
+                       s.window = "periodic", robust = TRUE)
+    
+    data <- data.frame(timestamp = data[[1]], count = (data[[2]]-data_decomp$time.series[,"seasonal"]-median(data[[2]])))
     data_decomp <- data.frame(timestamp=data[[1]], count=(as.numeric(trunc(data_decomp$time.series[,"trend"]+data_decomp$time.series[,"seasonal"]))))
+    
     if(posix_timestamp){
         data_decomp <- format_timestamp(data_decomp)
     }
@@ -51,13 +55,13 @@ detect_anoms <- function(data, k=0.49, alpha=0.05, num_obs_per_period=NULL, use_
     func_sigma <- match.fun(mad)
 
     ## Define values and vectors.
-    n = length(data[[2]])
-    lam = c(1:max_outliers)
-    R = c(1:max_outliers)
-    if(posix_timestamp){
-        R_idx = as.POSIXlt(data[[1]][1:max_outliers], tz="UTC")
-    }else{
-        R_idx = c(1:max_outliers)
+    n <- length(data[[2]])
+    lam <- c(1:max_outliers)
+    R <- c(1:max_outliers)
+    if (posix_timestamp) {
+        R_idx <- as.POSIXlt(data[[1]][1:max_outliers], tz = "UTC")
+    } else {
+        R_idx <- c(1:max_outliers)
     }
 
     num_anoms <- 0
@@ -69,18 +73,18 @@ detect_anoms <- function(data, k=0.49, alpha=0.05, num_obs_per_period=NULL, use_
 
         if(one_tail){
             if(upper_tail){
-                ares = data[[2]] - func_ma(data[[2]])
-            }else{
-                ares = func_ma(data[[2]]) - data[[2]]
+                ares <- data[[2]] - func_ma(data[[2]])
+            } else {
+                ares <- func_ma(data[[2]]) - data[[2]]
             }
-        }else{
+        } else {
             ares = abs(data[[2]] - func_ma(data[[2]]))
         }
 
-        ares = ares/func_sigma(data[[2]])
-        R[i] = max(ares)
+        ares <- ares/func_sigma(data[[2]])
+        R[i] <- max(ares)
 
-        temp_max_idx <- which(ares==max(ares))
+        temp_max_idx <- which(ares == max(ares))
 
         if(length(temp_max_idx) > 1)
             temp_max_idx <- temp_max_idx[1]
@@ -91,17 +95,17 @@ detect_anoms <- function(data, k=0.49, alpha=0.05, num_obs_per_period=NULL, use_
 
         ## Compute critical value.
         if(one_tail){
-            p = 1 - alpha/(n-i+1)
-        }else{
-            p = 1 - alpha/(2*(n-i+1))
+            p <- 1 - alpha/(n-i+1)
+        } else {
+            p <- 1 - alpha/(2*(n-i+1))
         }
 
-        t = qt(p,(n-i-1))
-        lam[i] = t*(n-i) / sqrt((n-i-1+t**2)*(n-i+1))
+        t <- qt(p,(n-i-1))
+        lam[i] <- t*(n-i) / sqrt((n-i-1+t**2)*(n-i+1))
 
         if(R[i] > lam[i])
             num_anoms <- i
     }
 
-    return(list("anoms"=R_idx[1:num_anoms], "stl"=data_decomp))
+    return(list(anoms = R_idx[1:num_anoms], stl = data_decomp))
 }

@@ -72,7 +72,7 @@ AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', alpha=0.05, p
   if(max_anoms > .49){
     stop(paste("max_anoms must be less than 50% of the data points (max_anoms =", round(max_anoms*length(x[[2]]), 0), " data_points =", length(x[[2]]),")."))
   }
-  if(all((direction == c('pos','neg','both')) == FALSE)){
+  if(!direction %in% c('pos', 'neg', 'both')){
     stop("direction options are: pos | neg | both.")
   }
   if(!(0.01 <= alpha || alpha <= 0.1)){
@@ -84,7 +84,7 @@ AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', alpha=0.05, p
   if(!is.logical(only_last)){
     stop("only_last must be either TRUE (T) or FALSE (F)")
   }
-  if(all((threshold == c('None','med_max','p95','p99')) == FALSE)){
+  if(!threshold %in% c('None', 'med_max', 'p95', 'p99')){
     stop("threshold options are: None | med_max | p95 | p99.") 
   }
   if(!is.logical(e_value)){
@@ -285,8 +285,8 @@ AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', alpha=0.05, p
   
   # Lastly, return anoms and optionally the plot if requested by the user
   if(plot){
-    return (list("anoms"=anoms, "plot"=xgraph))
+    return (list(anoms = anoms, plot = xgraph))
   } else {
-    return (list("anoms"=anoms, "plot"=NULL))
+    return (list(anoms = anoms, plot = NULL))
   }
 }

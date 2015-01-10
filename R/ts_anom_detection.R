@@ -55,7 +55,12 @@
 #' AnomalyDetectionTs(raw_data, max_anoms=0.02, direction='both', only_last="day", plot=TRUE)
 #' @seealso \code{\link{AnomalyDetectionVec}}
 #' @export
-AnomalyDetectionTs = function(x, max_anoms=0.10, direction='pos', alpha=0.05, only_last=NULL, threshold='None', e_value=F, longterm=F, plot=F, y_log=F, xlabel='', ylabel='count', title=NULL){
+#' 
+AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos', 
+                               alpha = 0.05, only_last = NULL, threshold = 'None', 
+                               e_value = FALSE, longterm = FALSE, plot = FALSE, 
+                               y_log = FALSE, xlabel = '', ylabel = 'count', 
+                               title = NULL){
   
   # Check for supported inputs types
   if(!is.data.frame(x)){
@@ -78,16 +83,16 @@ AnomalyDetectionTs = function(x, max_anoms=0.10, direction='pos', alpha=0.05, on
   if(max_anoms > .49){
     stop(paste("max_anoms must be less than 50% of the data points (max_anoms =", round(max_anoms*length(x[[2]]), 0), " data_points =", length(x[[2]]),")."))
   }
-  if(all((direction == c('pos','neg','both')) == FALSE)){
+  if(!direction %in% c('pos', 'neg', 'both')){
     stop("direction options are: pos | neg | both.")
   }
   if(!(0.01 <= alpha || alpha <= 0.1)){
     print("Warning: alpha is the statistical signifigance, and is usually between 0.01 and 0.1")
   }
-  if(!is.null(only_last) && all((only_last == c('day','hr')) == FALSE)){
+  if(!is.null(only_last) && !only_last %in% c('day','hr')){
     stop("only_last must be either 'day' or 'hr'")
   }
-  if(all((threshold == c('None','med_max','p95','p99')) == FALSE)){
+  if(!threshold %in% c('None','med_max','p95','p99')){
     stop("threshold options are: None | med_max | p95 | p99.") 
   }
   if(!is.logical(e_value)){
@@ -320,8 +325,8 @@ AnomalyDetectionTs = function(x, max_anoms=0.10, direction='pos', alpha=0.05, on
   
   # Lastly, return anoms and optionally the plot if requested by the user
   if(plot){
-    return (list("anoms"=anoms, "plot"=xgraph))
+    return (list(anoms = anoms, plot = xgraph))
   } else {
-    return (list("anoms"=anoms, "plot"=NULL))
+    return (list(anoms = anoms, plot = NULL))
   }
 }
