@@ -1,12 +1,13 @@
-get_range <- function(dfs, index = 2) {
-  vrange <- range(dfs[[index]], na.rm = TRUE)
-  vmin <- vrange[1]
-  vmax <- vrange[2]
-  
+get_range <- function(dfs, index = 2, y_log = F) {
+  vals <- dfs[[index]]
+  if(y_log) vals <- vals[vals > 0]
+  vrange = range(vals, na.rm=TRUE)
+  vmin = vrange[1]
+  vmax = vrange[2]
   return(c(vmin, vmax))
 }
 
-add_formatted_y <- function(yrange, expand = TRUE, digits = 1) {
+add_formatted_y <- function(yrange, y_log = FALSE, expand = TRUE, digits = 1) {
   ymin <- yrange[1]
   ymax <- yrange[2]
   
@@ -27,7 +28,14 @@ add_formatted_y <- function(yrange, expand = TRUE, digits = 1) {
     unit <- ""
   }
   
-  return (ggplot2::scale_y_continuous(breaks=seq(ymin, ymax, length.out=6), limits=c(ymin, ymax), labels=function(x) paste(round(x/divisor, digits=digits),unit,sep="")))
+  if(y_log){
+    transform = "log10"
+  }
+  else {
+    transform = "identity"
+  }
+  
+  return (ggplot2::scale_y_continuous(breaks=seq(ymin, ymax, length.out=6), limits=c(ymin, ymax), labels=function(x) paste(round(x/divisor, digits=digits),unit,sep=""), trans = transform))
   
 }
 
