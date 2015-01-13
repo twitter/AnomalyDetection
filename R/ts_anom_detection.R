@@ -193,14 +193,14 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   for(i in 1:length(all_data)) {
     
     anomaly_direction = switch(direction,
-                               "pos" = data.frame(one_tail=T, upper_tail=T), # upper-tail only (positive going anomalies)
-                               "neg" = data.frame(one_tail=T, upper_tail=F), # lower-tail only (negative going anomalies)
-                               "both" = data.frame(one_tail=F, upper_tail=T)) # Both tails. Tail direction is not actually used.
+                               "pos" = data.frame(one_tail=TRUE, upper_tail=TRUE), # upper-tail only (positive going anomalies)
+                               "neg" = data.frame(one_tail=TRUE, upper_tail=FALSE), # lower-tail only (negative going anomalies)
+                               "both" = data.frame(one_tail=FALSE, upper_tail=TRUE)) # Both tails. Tail direction is not actually used.
     
     # detect_anoms actually performs the anomaly detection and returns the results in a list containing the anomalies
     # as well as the decomposed components of the time series for further analysis.
-    s_h_esd_timestamps <- detect_anoms(all_data[[i]], k=max_anoms, alpha=alpha, num_obs_per_period=period, use_decomp=T, use_esd=F, 
-                                       one_tail=anomaly_direction$one_tail, upper_tail=anomaly_direction$upper_tail, verbose=F) 
+    s_h_esd_timestamps <- detect_anoms(all_data[[i]], k=max_anoms, alpha=alpha, num_obs_per_period=period, use_decomp=TRUE, use_esd=FALSE, 
+                                       one_tail=anomaly_direction$one_tail, upper_tail=anomaly_direction$upper_tail, verbose=FALSE) 
     
     # store decomposed components in local variable and overwrite s_h_esd_timestamps to contain only the anom timestamps 
     data_decomp <- s_h_esd_timestamps$stl
