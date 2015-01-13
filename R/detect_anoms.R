@@ -28,70 +28,65 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
     }
 
     # Check if our timestamps are posix
-    posix_timestamp <- if (class(data[[1]])[1] == "POSIXlt") TRUE else FALSE
+    posix_timestamp <- if (class(data[[1L]])[1L] == "POSIXlt") TRUE else FALSE
 
     # -- Step 1: Decompose data. This returns a univarite remainder which will be used for anomaly detection. Optionally, we might NOT decompose.
-    data_decomp <- stl(ts(data[[2]], frequency = num_obs_per_period), 
+    data_decomp <- stl(ts(data[[2L]], frequency = num_obs_per_period), 
                        s.window = "periodic", robust = TRUE)
     
-    data <- data.frame(timestamp = data[[1]], count = (data[[2]]-data_decomp$time.series[,"seasonal"]-median(data[[2]])))
-    data_decomp <- data.frame(timestamp=data[[1]], count=(as.numeric(trunc(data_decomp$time.series[,"trend"]+data_decomp$time.series[,"seasonal"]))))
+    data <- data.frame(timestamp = data[[1L]], count = (data[[2L]]-data_decomp$time.series[,"seasonal"]-median(data[[2L]])))
+    data_decomp <- data.frame(timestamp=data[[1L]], count=(as.numeric(trunc(data_decomp$time.series[,"trend"]+data_decomp$time.series[,"seasonal"]))))
     
     if(posix_timestamp){
         data_decomp <- format_timestamp(data_decomp)
     }
-    # Maximum number of outliers that S-H-ESD can detect (i.e. 49% of data)
+    # Maximum number of outliers that S-H-ESD can detect (e.g. 49% of data)
     max_outliers <- trunc(num_obs*k)
 
-    dataNAs <- sum(is.na(data[[2]]))
+    dataNAs <- sum(is.na(data[[2L]]))
     if (dataNAs > 0) {
-        if (any(is.na(data[[2]][-(1:dataNAs)]))) 
+        if (any(is.na(data[[2L]][-(1L:dataNAs)]))) 
             stop("Data contains non-leading NAs")
         else
-            data[[2]][1:dataNAs] <- 1
+            data[[2L]][1L:dataNAs] <- 1
     }
 
     func_ma <- match.fun(median)
     func_sigma <- match.fun(mad)
 
     ## Define values and vectors.
-    n <- length(data[[2]])
-    lam <- c(1:max_outliers)
-    R <- c(1:max_outliers)
+    n <- length(data[[2L]])
     if (posix_timestamp) {
-        R_idx <- as.POSIXlt(data[[1]][1:max_outliers], tz = "UTC")
+        R_idx <- as.POSIXlt(data[[1L]][1L:max_outliers], tz = "UTC")
     } else {
-        R_idx <- c(1:max_outliers)
+        R_idx <- 1L:max_outliers
     }
 
-    num_anoms <- 0
-
+    num_anoms <- 0L
+    
     # Compute test statistic until r=max_outliers values have been
     # removed from the sample.
-    for (i in 1:max_outliers){
+    for (i in 1L:max_outliers){
         if(verbose) print(paste(i,"/", max_outliers,"completed"))
 
         if(one_tail){
             if(upper_tail){
-                ares <- data[[2]] - func_ma(data[[2]])
+                ares <- data[[2L]] - func_ma(data[[2L]])
             } else {
-                ares <- func_ma(data[[2]]) - data[[2]]
+                ares <- func_ma(data[[2L]]) - data[[2L]]
             }
         } else {
-            ares = abs(data[[2]] - func_ma(data[[2]]))
+            ares = abs(data[[2L]] - func_ma(data[[2L]]))
         }
 
-        ares <- ares/func_sigma(data[[2]])
-        R[i] <- max(ares)
+        ares <- ares/func_sigma(data[[2L]])
+        R <- max(ares)
 
-        temp_max_idx <- which(ares == max(ares))
+        temp_max_idx <- which(ares == R)[1L]
 
-        if(length(temp_max_idx) > 1)
-            temp_max_idx <- temp_max_idx[1]
+        R_idx[i] <- data[[1L]][temp_max_idx]
 
-        R_idx[i] <- data[[1]][temp_max_idx]
-
-        data <- data[-which(data[[1]] == R_idx[i]), ]   
+        data <- data[-which(data[[1L]] == R_idx[i]), ]   
 
         ## Compute critical value.
         if(one_tail){
@@ -100,12 +95,12 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
             p <- 1 - alpha/(2*(n-i+1))
         }
 
-        t <- qt(p,(n-i-1))
-        lam[i] <- t*(n-i) / sqrt((n-i-1+t**2)*(n-i+1))
+        t <- qt(p,(n-i-1L))
+        lam <- t*(n-i) / sqrt((n-i-1+t**2)*(n-i+1))
 
-        if(R[i] > lam[i])
+        if(R > lam)
             num_anoms <- i
     }
-
-    return(list(anoms = R_idx[1:num_anoms], stl = data_decomp))
+    
+    return(list(anoms = R_idx[1L:num_anoms], stl = data_decomp))
 }

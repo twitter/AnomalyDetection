@@ -9,6 +9,7 @@ Maintainer: Owen S. Vallis <owensvallis@gmail.com>, Jordan Hochenbaum
  <jhochenbaum@gmail.com>
 Description: A technique for detecting anomalies in seasonal univariate time
     series.
+ByteCompile: yes
 Imports: ggplot2, stringr, lubridate
 Depends: R (>= 2.10.0)
 Suggests: testthat
