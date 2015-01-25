@@ -51,7 +51,7 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
         if (any(is.na(data[[2L]][-(1L:dataNAs)]))) 
             stop("Data contains non-leading NAs")
         else
-            data[[2L]][1L:dataNAs] <- 1
+            data[[2L]][1L:dataNAs] <- 0
     }
 
     func_ma <- match.fun(median)
