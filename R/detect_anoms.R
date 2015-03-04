@@ -43,7 +43,7 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
     # Maximum number of outliers that S-H-ESD can detect (e.g. 49% of data)
     max_outliers <- trunc(num_obs*k)
 
-    if(max_outliers == 0)){
+    if(max_outliers == 0){
       stop(paste0("With longterm=TRUE, AnomalyDetection splits the data into 2 week periods by default. You have ", num_obs, " observations in a period, which is too few. Set a higher piecewise_median_period_weeks."))
     }
 
