@@ -215,7 +215,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
     s_h_esd_timestamps <- s_h_esd_timestamps$anoms
 
     # -- Step 3: Use detected anomaly timestamps to extract the actual anomalies (timestamp and value) from the data
-    if(length(s_h_esd_timestamps) > 0){
+    if(!is.null(s_h_esd_timestamps)){
       anoms <- subset(all_data[[i]], (all_data[[i]][[1]] %in% s_h_esd_timestamps))
     } else {
       anoms <- data.frame(timestamp=numeric(0), count=numeric(0))
