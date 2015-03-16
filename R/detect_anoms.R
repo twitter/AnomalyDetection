@@ -16,20 +16,27 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
  # Returns:
  #   A list containing the anomalies (anoms) and decomposition components (stl).
 
-    if(is.null(num_obs_per_period)) {
+    if(is.null(num_obs_per_period)){
         stop("must supply period length for time series decomposition")
     }
 
     num_obs <- nrow(data)
 
     # Check to make sure we have at least two periods worth of data for anomaly context
-    if(num_obs < num_obs_per_period * 2) {
+    if(num_obs < num_obs_per_period * 2){
         stop("Anom detection needs at least 2 periods worth of data")
     }
 
     # Check if our timestamps are posix
     posix_timestamp <- if (class(data[[1L]])[1L] == "POSIXlt") TRUE else FALSE
 
+    # Handle NAs
+    if (length(rle(is.na(c(NA,data[[2L]],NA)))$values)>3){
+      stop("Data contains non-leading NAs. We suggest replacing NAs with interpolated values (see na.approx in Zoo package).")
+    } else {
+      data <- na.omit(data)
+    }
+    
     # -- Step 1: Decompose data. This returns a univarite remainder which will be used for anomaly detection. Optionally, we might NOT decompose.
     data_decomp <- stl(ts(data[[2L]], frequency = num_obs_per_period),
                        s.window = "periodic", robust = TRUE)
@@ -50,20 +57,12 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
       stop(paste0("With longterm=TRUE, AnomalyDetection splits the data into 2 week periods by default. You have ", num_obs, " observations in a period, which is too few. Set a higher piecewise_median_period_weeks."))
     }
 
-    dataNAs <- sum(is.na(data[[2L]]))
-    if (dataNAs > 0) {
-        if (any(is.na(data[[2L]][-(1L:dataNAs)])))
-            stop("Data contains non-leading NAs")
-        else
-            data[[2L]][1L:dataNAs] <- 0
-    }
-
     func_ma <- match.fun(median)
     func_sigma <- match.fun(mad)
 
     ## Define values and vectors.
     n <- length(data[[2L]])
-    if (posix_timestamp) {
+    if (posix_timestamp){
         R_idx <- as.POSIXlt(data[[1L]][1L:max_outliers], tz = "UTC")
     } else {
         R_idx <- 1L:max_outliers
