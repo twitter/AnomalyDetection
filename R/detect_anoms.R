@@ -1,5 +1,5 @@
-detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL, 
-                         use_decomp = TRUE, use_esd = FALSE, one_tail = TRUE, 
+detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL,
+                         use_decomp = TRUE, use_esd = FALSE, one_tail = TRUE,
                          upper_tail = TRUE, verbose = FALSE) {
  # Detects anomalies in a time series using S-H-ESD.
  #
@@ -15,11 +15,11 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
  #	 verbose: Additionally printing for debugging.
  # Returns:
  #   A list containing the anomalies (anoms) and decomposition components (stl).
-  
+
     if(is.null(num_obs_per_period)) {
         stop("must supply period length for time series decomposition")
     }
-    
+
     num_obs <- nrow(data)
 
     # Check to make sure we have at least two periods worth of data for anomaly context
@@ -31,7 +31,7 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
     posix_timestamp <- if (class(data[[1L]])[1L] == "POSIXlt") TRUE else FALSE
 
     # -- Step 1: Decompose data. This returns a univarite remainder which will be used for anomaly detection. Optionally, we might NOT decompose.
-    data_decomp <- stl(ts(data[[2L]], frequency = num_obs_per_period), 
+    data_decomp <- stl(ts(data[[2L]], frequency = num_obs_per_period),
                        s.window = "periodic", robust = TRUE)
     
     # Remove the seasonal component, and the median of the data to create the univariate remainder
@@ -39,16 +39,20 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
     
     # Store the smoothed seasonal component, plus the trend component for use in determining the "expected values" option
     data_decomp <- data.frame(timestamp=data[[1L]], count=(as.numeric(trunc(data_decomp$time.series[,"trend"]+data_decomp$time.series[,"seasonal"]))))
-    
+
     if(posix_timestamp){
         data_decomp <- format_timestamp(data_decomp)
     }
     # Maximum number of outliers that S-H-ESD can detect (e.g. 49% of data)
     max_outliers <- trunc(num_obs*k)
 
+    if(max_outliers == 0){
+      stop(paste0("With longterm=TRUE, AnomalyDetection splits the data into 2 week periods by default. You have ", num_obs, " observations in a period, which is too few. Set a higher piecewise_median_period_weeks."))
+    }
+
     dataNAs <- sum(is.na(data[[2L]]))
     if (dataNAs > 0) {
-        if (any(is.na(data[[2L]][-(1L:dataNAs)]))) 
+        if (any(is.na(data[[2L]][-(1L:dataNAs)])))
             stop("Data contains non-leading NAs")
         else
             data[[2L]][1L:dataNAs] <- 0
@@ -66,7 +70,7 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
     }
 
     num_anoms <- 0L
-    
+
     # Compute test statistic until r=max_outliers values have been
     # removed from the sample.
     for (i in 1L:max_outliers){
@@ -89,7 +93,7 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
 
         R_idx[i] <- data[[1L]][temp_max_idx]
 
-        data <- data[-which(data[[1L]] == R_idx[i]), ]   
+        data <- data[-which(data[[1L]] == R_idx[i]), ]
 
         ## Compute critical value.
         if(one_tail){
@@ -104,6 +108,6 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
         if(R > lam)
             num_anoms <- i
     }
-    
+
     return(list(anoms = R_idx[1L:num_anoms], stl = data_decomp))
 }
