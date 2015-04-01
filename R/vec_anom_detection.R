@@ -271,9 +271,6 @@ AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', alpha=0.05, p
     xgraph <- xgraph + add_formatted_y(yrange, y_log=y_log)
   }
   
-  # Fix to make sure date-time is correct and that we retain hms at midnight
-  all_anoms[[1]] <- format(all_anoms[[1]], format="%Y-%m-%d %H:%M:%S")
-  
   # Store expected values if set by user
   if(e_value) {
     anoms <- data.frame(index=all_anoms[[1]], anoms=all_anoms[[2]], expected_value=subset(seasonal_plus_trend[[2]], seasonal_plus_trend[[1]] %in% all_anoms[[1]]))  
