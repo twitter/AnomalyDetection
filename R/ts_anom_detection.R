@@ -330,6 +330,10 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
     anoms <- data.frame(timestamp=all_anoms[[1]], anoms=all_anoms[[2]])
   }
 
+  # Make sure we're still a valid POSIXlt datetime.
+  # TODO: Make sure we keep original datetime format and timezone.
+  anoms$timestamp <- as.POSIXlt(anoms$timestamp, tz="UTC")
+
   # Lastly, return anoms and optionally the plot if requested by the user
   if(plot){
     return (list(anoms = anoms, plot = xgraph))
