@@ -47,3 +47,7 @@ test_that("both directions, e_value, threshold set to med_max", {
   expect_equal(length(results$anoms[[2]]), 6)
   expect_equal(results$plot, NULL)
 })
+
+
+
+
