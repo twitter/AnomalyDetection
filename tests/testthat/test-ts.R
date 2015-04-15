@@ -74,3 +74,11 @@ test_that("check handling of datasets with NAs in the middle", {
   raw_data[floor(length(raw_data[[2L]])/2), "count"] <- NA
   expect_error(AnomalyDetectionVec(raw_data[[2L]], max_anoms=0.02, period=1440, direction='both'))
 })
+
+context("Testing constant value time series")
+
+test_that("checking for errors if time series has constant value for all values", {
+    test <- rep(1,1000)
+    expect_true({AnomalyDetectionVec(test, period=14, plot=T, direction='both'); TRUE})
+
+})

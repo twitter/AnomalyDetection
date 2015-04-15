@@ -8,7 +8,8 @@
 AnomalyDetectionTs(x, max_anoms = 0.1, direction = "pos", alpha = 0.05,
   only_last = NULL, threshold = "None", e_value = FALSE,
   longterm = FALSE, piecewise_median_period_weeks = 2, plot = FALSE,
-  y_log = FALSE, xlabel = "", ylabel = "count", title = NULL)
+  y_log = FALSE, xlabel = "", ylabel = "count", title = NULL,
+  verbose = FALSE)
 }
 \arguments{
 \item{x}{Time series as a two column data frame where the first column consists of the
@@ -47,6 +48,8 @@ large positive anomalies relative to the rest of the data.}
 \item{ylabel}{Y-axis label to be added to the output plot.}
 
 \item{title}{Title for the output plot.}
+
+\item{verbose}{Enable debug messages}
 }
 \value{
 The returned value is a list with the following components.
