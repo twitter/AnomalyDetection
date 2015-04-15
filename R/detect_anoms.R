@@ -104,7 +104,7 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
         t <- qt(p,(n-i-1L))
         lam <- t*(n-i) / sqrt((n-i-1+t**2)*(n-i+1))
 
-        if(R > lam)
+        if(!is.nan(R) && R > lam)
             num_anoms <- i
     }
     
