@@ -73,7 +73,7 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
     # Compute test statistic until r=max_outliers values have been
     # removed from the sample.
     for (i in 1L:max_outliers){
-        if(verbose) print(paste(i,"/", max_outliers,"completed"))
+        if(verbose) message(paste(i,"/", max_outliers,"completed"))
 
         if(one_tail){
             if(upper_tail){
