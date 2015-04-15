@@ -85,7 +85,12 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
             ares = abs(data[[2L]] - func_ma(data[[2L]]))
         }
 
-        ares <- ares/func_sigma(data[[2L]])
+        # protect against constant time series
+        data_sigma <- func_sigma(data[[2L]])
+        if(data_sigma == 0) 
+            break
+
+        ares <- ares/data_sigma
         R <- max(ares)
 
         temp_max_idx <- which(ares == R)[1L]
@@ -104,7 +109,7 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
         t <- qt(p,(n-i-1L))
         lam <- t*(n-i) / sqrt((n-i-1+t**2)*(n-i+1))
 
-        if(!is.nan(R) && R > lam)
+        if(R > lam)
             num_anoms <- i
     }
     
