@@ -326,9 +326,11 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   
   # Store expected values if set by user
   if(e_value) {
-    anoms <- data.frame(timestamp=all_anoms[[1]], anoms=all_anoms[[2]], expected_value=subset(seasonal_plus_trend[[2]], as.POSIXlt(seasonal_plus_trend[[1]], tz="UTC") %in% all_anoms[[1]]))
+    anoms <- data.frame(timestamp=all_anoms[[1]], anoms=all_anoms[[2]], 
+                        expected_value=subset(seasonal_plus_trend[[2]], as.POSIXlt(seasonal_plus_trend[[1]], tz="UTC") %in% all_anoms[[1]]),
+                        stringsAsFactors=FALSE)
   } else {
-    anoms <- data.frame(timestamp=all_anoms[[1]], anoms=all_anoms[[2]])
+    anoms <- data.frame(timestamp=all_anoms[[1]], anoms=all_anoms[[2]], stringsAsFactors=FALSE)
   }
 
   # Make sure we're still a valid POSIXlt datetime.
