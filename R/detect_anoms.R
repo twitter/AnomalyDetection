@@ -73,7 +73,7 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
     # Compute test statistic until r=max_outliers values have been
     # removed from the sample.
     for (i in 1L:max_outliers){
-        if(verbose) print(paste(i,"/", max_outliers,"completed"))
+        if(verbose) message(paste(i,"/", max_outliers,"completed"))
 
         if(one_tail){
             if(upper_tail){
@@ -85,7 +85,12 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
             ares = abs(data[[2L]] - func_ma(data[[2L]]))
         }
 
-        ares <- ares/func_sigma(data[[2L]])
+        # protect against constant time series
+        data_sigma <- func_sigma(data[[2L]])
+        if(data_sigma == 0) 
+            break
+
+        ares <- ares/data_sigma
         R <- max(ares)
 
         temp_max_idx <- which(ares == R)[1L]

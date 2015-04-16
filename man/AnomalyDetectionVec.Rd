@@ -8,7 +8,7 @@
 AnomalyDetectionVec(x, max_anoms = 0.1, direction = "pos", alpha = 0.05,
   period = NULL, only_last = F, threshold = "None", e_value = F,
   longterm_period = NULL, plot = F, y_log = F, xlabel = "",
-  ylabel = "count", title = NULL)
+  ylabel = "count", title = NULL, verbose = FALSE)
 }
 \arguments{
 \item{x}{Time series as a column data frame, list, or vector, where the column consists of
@@ -47,6 +47,8 @@ large positive anomalies relative to the rest of the data.}
 \item{ylabel}{Y-axis label to be added to the output plot.}
 
 \item{title}{Title for the output plot.}
+
+\item{verbose}{Enable debug messages}
 }
 \value{
 The returned value is a list with the following components.

@@ -1,2 +1,2 @@
 library('testthat')
-test_check("AnomalyDetection")
+test_check("AnomalyDetection") 
