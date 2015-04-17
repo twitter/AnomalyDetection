@@ -27,3 +27,4 @@ notifications:
     on_success: change
     on_failure: change
 
+sudo: true

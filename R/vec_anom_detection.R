@@ -33,6 +33,7 @@
 #' of the daily max values (med_max), the 95th percentile of the daily max values (p95), and the 
 #' 99th percentile of the daily max values (p99).
 #' @param title Title for the output plot.
+#' @param verbose Enable debug messages 
 #' @return The returned value is a list with the following components.
 #' @return \item{anoms}{Data frame containing index, values, and optionally expected values.}
 #' @return \item{plot}{A graphical object if plotting was requested by the user. The plot contains
@@ -57,7 +58,11 @@
 #' only_last=TRUE, plot=TRUE)
 #' @seealso \code{\link{AnomalyDetectionTs}}
 #' @export
-AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', alpha=0.05, period=NULL, only_last=F, threshold='None', e_value=F, longterm_period=NULL, plot=F, y_log=F, xlabel='', ylabel='count', title=NULL){
+AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', 
+                               alpha=0.05, period=NULL, only_last=F, 
+                               threshold='None', e_value=F, longterm_period=NULL, 
+                               plot=F, y_log=F, xlabel='', ylabel='count', 
+                               title=NULL, verbose=FALSE){
   
   # Check for supported inputs types and add timestamps
   if(is.data.frame(x) && ncol(x) == 1 && is.numeric(x[[1]])){
@@ -76,7 +81,7 @@ AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', alpha=0.05, p
     stop("direction options are: pos | neg | both.")
   }
   if(!(0.01 <= alpha || alpha <= 0.1)){
-    print("Warning: alpha is the statistical signifigance, and is usually between 0.01 and 0.1")
+    if(verbose) message("Warning: alpha is the statistical signifigance, and is usually between 0.01 and 0.1")
   }
   if(is.null(period)){
     stop("Period must be set to the number of data points in a single period")
@@ -155,7 +160,7 @@ AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', alpha=0.05, p
     # detect_anoms actually performs the anomaly detection and returns the results in a list containing the anomalies
     # as well as the decomposed components of the time series for further analysis.
     s_h_esd_timestamps <- detect_anoms(all_data[[i]], k=max_anoms, alpha=alpha, num_obs_per_period=period, use_decomp=TRUE, use_esd=FALSE, 
-                                       one_tail=anomaly_direction$one_tail, upper_tail=anomaly_direction$upper_tail, verbose=FALSE) 
+                                       one_tail=anomaly_direction$one_tail, upper_tail=anomaly_direction$upper_tail, verbose=verbose) 
     
     # store decomposed components in local variable and overwrite s_h_esd_timestamps to contain only the anom timestamps
     data_decomp <- s_h_esd_timestamps$stl
@@ -218,7 +223,7 @@ AnomalyDetectionVec = function(x, max_anoms=0.10, direction='pos', alpha=0.05, p
   
   # If there are no anoms, then let's exit
   if(anom_pct == 0){
-    print("No anomalies detected.")
+    if(verbose) message("No anomalies detected.")
     return (list("anoms"=NULL, "plot"=NULL))
   }
   
