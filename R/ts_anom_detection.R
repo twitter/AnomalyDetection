@@ -33,7 +33,7 @@
 #' of the daily max values (med_max), the 95th percentile of the daily max values (p95), and the
 #' 99th percentile of the daily max values (p99).
 #' @param title Title for the output plot.
-#' @param verbose Enable debug messages 
+#' @param verbose Enable debug messages
 #' @return The returned value is a list with the following components.
 #' @return \item{anoms}{Data frame containing timestamps, values, and optionally expected values.}
 #' @return \item{plot}{A graphical object if plotting was requested by the user. The plot contains
@@ -145,7 +145,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
 
   # Aggregate data to minutely if secondly
   if(gran == "sec"){
-    x <- format_timestamp(aggregate(x[2], format(x[1], "%Y-%m-%d %H:%M:00"), eval(parse(text="sum"))))
+    x <- format_timestamp(aggregate(x[2], format(x[1], "%Y-%m-%d %H:%M:00"), sum))
   }
 
   period = switch(gran,
@@ -323,10 +323,10 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
 
   # Fix to make sure date-time is correct and that we retain hms at midnight
   all_anoms[[1]] <- format(all_anoms[[1]], format="%Y-%m-%d %H:%M:%S")
-  
+
   # Store expected values if set by user
   if(e_value) {
-    anoms <- data.frame(timestamp=all_anoms[[1]], anoms=all_anoms[[2]], 
+    anoms <- data.frame(timestamp=all_anoms[[1]], anoms=all_anoms[[2]],
                         expected_value=subset(seasonal_plus_trend[[2]], as.POSIXlt(seasonal_plus_trend[[1]], tz="UTC") %in% all_anoms[[1]]),
                         stringsAsFactors=FALSE)
   } else {
