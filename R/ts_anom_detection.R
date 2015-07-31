@@ -83,6 +83,10 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
     colnames(x) <- c("timestamp", "count")
   }
   
+  if(!is.logical(na.rm)){
+    stop("na.rm must be either TRUE (T) or FALSE (F)")
+  }
+  
   # Deal with NAs in timestamps
   if(any(is.na(x$timestamp))){
     if(na.rm){
