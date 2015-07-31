@@ -33,7 +33,8 @@
 #' of the daily max values (med_max), the 95th percentile of the daily max values (p95), and the
 #' 99th percentile of the daily max values (p99).
 #' @param title Title for the output plot.
-#' @param verbose Enable debug messages 
+#' @param verbose Enable debug messages.
+#' @param na.rm Remove any NAs in timestamps.(default: FALSE) 
 #' @return The returned value is a list with the following components.
 #' @return \item{anoms}{Data frame containing timestamps, values, and optionally expected values.}
 #' @return \item{plot}{A graphical object if plotting was requested by the user. The plot contains
@@ -82,6 +83,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
     colnames(x) <- c("timestamp", "count")
   }
   
+  # Deal with NAs in timestamps
   if(any(is.na(x$timestamp))){
     if(na.rm){
       x <- x[-which(is.na(x$timestamp)), ]
