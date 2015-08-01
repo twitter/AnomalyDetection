@@ -322,15 +322,15 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   }
 
   # Fix to make sure date-time is correct and that we retain hms at midnight
-  all_anoms[[1]] <- format(all_anoms[[1]], format="%Y-%m-%d %H:%M:%S")
+  all_anoms_fmt <- format(all_anoms[[1]], format="%Y-%m-%d %H:%M:%S")
   
   # Store expected values if set by user
   if(e_value) {
-    anoms <- data.frame(timestamp=all_anoms[[1]], anoms=all_anoms[[2]], 
-                        expected_value=subset(seasonal_plus_trend[[2]], as.POSIXlt(seasonal_plus_trend[[1]], tz="UTC") %in% all_anoms[[1]]),
+    anoms <- data.frame(timestamp=all_anoms_fmt, anoms=all_anoms[[2]], 
+                        expected_value=subset(seasonal_plus_trend[[2]], as.POSIXct(seasonal_plus_trend[[1]], tz="UTC") %in% as.POSIXct(all_anoms[[1]])),
                         stringsAsFactors=FALSE)
   } else {
-    anoms <- data.frame(timestamp=all_anoms[[1]], anoms=all_anoms[[2]], stringsAsFactors=FALSE)
+    anoms <- data.frame(timestamp=all_anoms_fmt, anoms=all_anoms[[2]], stringsAsFactors=FALSE)
   }
 
   # Make sure we're still a valid POSIXlt datetime.
