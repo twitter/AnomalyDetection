@@ -15,6 +15,17 @@ test_that("both directions, e_value, with longterm", {
   expect_equal(results$plot, NULL)
 })
 
+test_that("both directions, e_value, date only", {
+    data_file <- system.file("extdata", "data_date.csv", package="AnomalyDetection")
+    data <- read.csv(data_file)
+    data$timestamp <- as.POSIXlt(data$timestamp, tz = 'UTC')
+    results <- AnomalyDetectionTs(data, max_anoms=0.02, direction='both', e_value=TRUE)
+    expect_equal(length(results$anoms), 3)
+    expect_equal(results$anoms$expected_value, c(26, 27))
+    expect_equal(length(results$anoms[[2L]]), 2)
+    expect_equal(results$plot, NULL)
+})
+
 test_that("both directions, e_value, threshold set to med_max", {
   results <- AnomalyDetectionTs(raw_data, max_anoms=0.02, direction='both', threshold="med_max", e_value=TRUE)
   expect_equal(length(results$anoms), 3)
