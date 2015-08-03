@@ -1,6 +1,8 @@
 # AnomalyDetection R package
 
 [![Build Status](https://travis-ci.org/twitter/AnomalyDetection.png)](https://travis-ci.org/twitter/AnomalyDetection)
+[![Pending Pull-Requests](http://githubbadges.herokuapp.com/twitter/AnomalyDetection/pulls.svg?style=flat)](https://github.com/twitter/AnomalyDetection/pulls)
+[![Github Issues](http://githubbadges.herokuapp.com/twitter/AnomalyDetection/issues.svg)](https://github.com/twitter/AnomalyDetection/issues)
 
 AnomalyDetection is an open-source R package to detect anomalies which is
 robust, from a statistical standpoint, in the presence of seasonality and an
