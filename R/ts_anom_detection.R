@@ -166,7 +166,9 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
     })
   } 
   
-  
+  if(length(unique(x$timestamp))!=length(x$timestamp)){
+    stop("timestamps are not unique, please check your data OR set unique_by_time=TRUE")
+  }
 
   # -- Setup for longterm time series
 
