@@ -62,7 +62,7 @@
 AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
                                alpha = 0.05, only_last = NULL, threshold = 'None',
                                e_value = FALSE, longterm = FALSE, piecewise_median_period_weeks = 2, plot = FALSE,
-                               y_log = FALSE, xlabel = '', ylabel = 'count',
+                               y_log = FALSE, xlabel = '', ylabel = 'count', unique_by_time = FALSE,
                                title = NULL, verbose=FALSE){
 
   # Check for supported inputs types
@@ -158,6 +158,15 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   if(max_anoms < 1/num_obs){
     max_anoms <- 1/num_obs
   }
+  
+  # create averaged count for each unique timestamp
+  if(unique_by_time){
+    x <- ddply(x, .(timestamp), function(y){
+      y$count <- mean(y$count)
+    })
+  } 
+  
+  
 
   # -- Setup for longterm time series
 
