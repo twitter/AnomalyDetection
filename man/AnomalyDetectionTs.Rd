@@ -47,6 +47,8 @@ large positive anomalies relative to the rest of the data.}
 
 \item{ylabel}{Y-axis label to be added to the output plot.}
 
+\item{unique_by_time}{A boolean value to specify whether to average count values for each unique timestamp if there exists more than one count values for some timestamp.}
+
 \item{title}{Title for the output plot.}
 
 \item{verbose}{Enable debug messages}
