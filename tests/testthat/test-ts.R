@@ -21,3 +21,10 @@ test_that("both directions, e_value, threshold set to med_max", {
   expect_equal(length(results$anoms[[2L]]), 4)
   expect_equal(results$plot, NULL)
 })
+
+test_that("average the count for each unique timestamp if the timestamps are not unique", {
+  raw_data[14399,] <- raw_data[14394,]
+  expect_equal(dim(raw_data)[1], 14399)
+  expect_error(AnomalyDetectionTs(raw_data, max_anoms=0.02, direction='both', plot=TRUE))
+  expect_that(AnomalyDetectionTs(raw_data, max_anoms=0.02, direction='both', plot=TRUE, unique_by_time = TRUE), not(throws_error()))
+})
