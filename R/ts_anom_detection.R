@@ -163,16 +163,17 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   
   # create averaged count for each unique timestamp
   if(unique_by_time){
-    x$timestamp <- as.character(x$timestamp)
+    x$timestamp <- as.POSIXct(x$timestamp)
     x <- ddply(x, .(timestamp), function(y){
-      y$count <- mean(y$count, na.rm=TRUE)
+      y$count <- ifelse(dim(y)[1]>1, mean(y$count, na.rm=TRUE), y$count)
     })
-    x$timestamp <- as.POSIXlt(x$timestamp)
-  }
-
-    if(length(unique(x$timestamp))!=length(x$timestamp)){
+    colnames(x)[2] <- "count" 
+  } 
+  
+  if(length(unique(x$timestamp))!=length(x$timestamp)){
     stop("timestamps are not unique, please check your data OR set unique_by_time=TRUE")
   }
+  
   # TODO: add new input argument to roxygen comment
 
   # -- Setup for longterm time series
