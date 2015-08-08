@@ -163,7 +163,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   # create averaged count for each unique timestamp
   if(unique_by_time){
     x$timestamp <- as.POSIXct(x$timestamp)
-    x <- ddply(x, .(timestamp), function(y){
+    x <- plyr::ddply(x, plyr::.(timestamp), function(y){
       y$count <- ifelse(dim(y)[1]>1, mean(y$count, na.rm=TRUE), y$count)
     })
     colnames(x)[2] <- "count" 
