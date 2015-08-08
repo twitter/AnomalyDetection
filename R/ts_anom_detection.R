@@ -32,8 +32,7 @@
 #' than one of the specified thresholds which include: the median
 #' of the daily max values (med_max), the 95th percentile of the daily max values (p95), and the
 #' 99th percentile of the daily max values (p99).
-#' @param unique_by_time A boolean value to specify whether to average count values for each 
-#' unique timestamp if there exists more than one count values for some timestamp.
+#' @param unique_by_time A boolean value to specify whether to average count values for each unique timestamp if there exists more than one count values for some timestamp.
 #' @param title Title for the output plot.
 #' @param verbose Enable debug messages 
 #' @return The returned value is a list with the following components.
