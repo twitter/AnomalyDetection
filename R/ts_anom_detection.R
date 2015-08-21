@@ -279,7 +279,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   # If there are no anoms, then let's exit
   if(anom_pct == 0){
     if(verbose) message("No anomalies detected.")
-    return (list("anoms"=NULL, "plot"=NULL))
+    return (list("anoms"=data.frame(), "plot"=plot.new()))
   }
 
   if(plot){
@@ -341,6 +341,6 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   if(plot){
     return (list(anoms = anoms, plot = xgraph))
   } else {
-    return (list(anoms = anoms, plot = NULL))
+    return (list(anoms = anoms, plot = plot.new()))
   }
 }
