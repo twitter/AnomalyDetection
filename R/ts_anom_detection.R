@@ -33,7 +33,8 @@
 #' of the daily max values (med_max), the 95th percentile of the daily max values (p95), and the
 #' 99th percentile of the daily max values (p99).
 #' @param title Title for the output plot.
-#' @param verbose Enable debug messages 
+#' @param verbose Enable debug messages.
+#' @param na.rm Remove any NAs in timestamps.(default: FALSE) 
 #' @return The returned value is a list with the following components.
 #' @return \item{anoms}{Data frame containing timestamps, values, and optionally expected values.}
 #' @return \item{plot}{A graphical object if plotting was requested by the user. The plot contains
@@ -63,7 +64,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
                                alpha = 0.05, only_last = NULL, threshold = 'None',
                                e_value = FALSE, longterm = FALSE, piecewise_median_period_weeks = 2, plot = FALSE,
                                y_log = FALSE, xlabel = '', ylabel = 'count',
-                               title = NULL, verbose=FALSE){
+                               title = NULL, verbose=FALSE, na.rm = FALSE){
 
   # Check for supported inputs types
   if(!is.data.frame(x)){
@@ -80,6 +81,19 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   # Rename data frame columns if necessary
   if (any((names(x) == c("timestamp", "count")) == FALSE)) {
     colnames(x) <- c("timestamp", "count")
+  }
+  
+  if(!is.logical(na.rm)){
+    stop("na.rm must be either TRUE (T) or FALSE (F)")
+  }
+  
+  # Deal with NAs in timestamps
+  if(any(is.na(x$timestamp))){
+    if(na.rm){
+      x <- x[-which(is.na(x$timestamp)), ]
+    } else {
+      stop("timestamp contains NAs, please set na.rm to TRUE or remove the NAs manually.")
+    }
   }
 
   # Sanity check all input parameters
