@@ -32,6 +32,7 @@
 #' than one of the specified thresholds which include: the median
 #' of the daily max values (med_max), the 95th percentile of the daily max values (p95), and the
 #' 99th percentile of the daily max values (p99).
+#' @param unique_by_time A boolean value to specify whether to average count values for each unique timestamp if there exists more than one count values for some timestamp.
 #' @param title Title for the output plot.
 #' @param verbose Enable debug messages 
 #' @return The returned value is a list with the following components.
@@ -62,7 +63,7 @@
 AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
                                alpha = 0.05, only_last = NULL, threshold = 'None',
                                e_value = FALSE, longterm = FALSE, piecewise_median_period_weeks = 2, plot = FALSE,
-                               y_log = FALSE, xlabel = '', ylabel = 'count',
+                               y_log = FALSE, xlabel = '', ylabel = 'count', unique_by_time = FALSE,
                                title = NULL, verbose=FALSE){
 
   # Check for supported inputs types
@@ -162,6 +163,21 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   if(max_anoms < 1/num_obs){
     max_anoms <- 1/num_obs
   }
+  
+  # create averaged count for each unique timestamp
+  if(unique_by_time){
+    x$timestamp <- as.POSIXct(x$timestamp)
+    x <- plyr::ddply(x, plyr::.(timestamp), function(y){
+      y$count <- ifelse(dim(y)[1]>1, mean(y$count, na.rm=TRUE), y$count)
+    })
+    colnames(x)[2] <- "count" 
+  } 
+  
+  if(length(unique(x$timestamp))!=length(x$timestamp)){
+    stop("timestamps are not unique, please check your data OR set unique_by_time=TRUE")
+  }
+  
+  # TODO: add new input argument to roxygen comment
 
   # -- Setup for longterm time series
 

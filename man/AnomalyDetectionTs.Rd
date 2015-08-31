@@ -8,8 +8,8 @@
 AnomalyDetectionTs(x, max_anoms = 0.1, direction = "pos", alpha = 0.05,
   only_last = NULL, threshold = "None", e_value = FALSE,
   longterm = FALSE, piecewise_median_period_weeks = 2, plot = FALSE,
-  y_log = FALSE, xlabel = "", ylabel = "count", title = NULL,
-  verbose = FALSE)
+  y_log = FALSE, xlabel = "", ylabel = "count", unique_by_time = FALSE, 
+  title = NULL, verbose = FALSE)
 }
 \arguments{
 \item{x}{Time series as a two column data frame where the first column consists of the
@@ -46,6 +46,8 @@ large positive anomalies relative to the rest of the data.}
 \item{xlabel}{X-axis label to be added to the output plot.}
 
 \item{ylabel}{Y-axis label to be added to the output plot.}
+
+\item{unique_by_time}{A boolean value to specify whether to average count values for each unique timestamp if there exists more than one count values for some timestamp.}
 
 \item{title}{Title for the output plot.}
 
