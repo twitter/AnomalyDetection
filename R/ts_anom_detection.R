@@ -242,9 +242,9 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
 
     # Filter the anomalies using one of the thresholding functions if applicable
     if(threshold != "None"){
-      # Calculate daily max values
-      periodic_maxs <- tapply(x[[2]],as.Date(x[[1]]),FUN=max)
       if(direction != 'neg'){
+        # Calculate daily max values
+        periodic_maxs <- tapply(x[[2]],as.Date(x[[1]]),FUN=max)
         # Calculate the threshold set by the user
         if(threshold == 'med_max'){
           thresh <- median(periodic_maxs)
@@ -256,12 +256,14 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
         # Remove any anoms below the threshold
         anoms <- subset(anoms, anoms[[2]] >= thresh)
       }else{
-        if(threshold == '-med_max'){
-          thresh <- median(periodic_maxs)
-        }else if (threshold == '-p95'){
-          thresh <- quantile(periodic_maxs, .05)
-        }else if (threshold == '-p99'){
-          thresh <- quantile(periodic_maxs, .01)
+        # Calculate daily min values
+        periodic_mins <- tapply(x[[2]],as.Date(x[[1]]),FUN=min)
+        if(threshold == 'med_max'){
+          thresh <- median(periodic_mins)
+        }else if (threshold == 'p95'){
+          thresh <- quantile(periodic_mins, .05)
+        }else if (threshold == 'p99'){
+          thresh <- quantile(periodic_mins, .01)
         }
         # Remove any anoms above the threshold
         anoms <- subset(anoms, anoms[[2]] <= thresh)
