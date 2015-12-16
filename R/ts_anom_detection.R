@@ -257,7 +257,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
         # Calculate daily max values
         periodic_mins <- tapply(x[[2]],as.Date(x[[1]]),FUN=min)
         # Calculate the threshold set by the user
-        thresh <- quantile(periodic_mins, abs(threshhold))
+        thresh <- quantile(periodic_mins, abs(threshold))
         }
         # Remove any anoms above the threshold
         anoms <- subset(anoms, anoms[[2]] <= thresh)
