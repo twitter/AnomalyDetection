@@ -13,7 +13,7 @@
 #' @param only_last Find and report anomalies only within the last day or hr in the time series.
 #' \code{NULL | 'day' | 'hr'}.
 #' @param threshold Only report positive going anoms above the threshold specified. Options are:
-#' \code{'None' | 'med_max' | 'p95' | 'p99'}.
+#' \code{None | med_max | -med_max | 0 < threshold < 100 where threshold is an integer.}.
 #' @param e_value Add an additional column to the anoms output containing the expected value.
 #' @param longterm Increase anom detection efficacy for time series that are greater than a month.
 #' See Details below.
@@ -113,8 +113,8 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   if(!is.null(only_last) && !only_last %in% c('day','hr')){
     stop("only_last must be either 'day' or 'hr'")
   }
-  # if(!threshold %in% c('None','med_max','p95','p99', '-med_max','-p95','-p99')){
-  #   stop("threshold options are: None | med_max | p95 | p99.")
+  # if(!(threshold %in% c('None','med_max','-med_max')) || threshold < 100 || threshold > 0){
+  #   stop("threshold options are: None | med_max | -med_max | 0 < threshold < 100 where threshold is an integer.")
   # }
   if(!is.logical(e_value)){
     stop("e_value must be either TRUE (T) or FALSE (F)")
@@ -242,25 +242,31 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
 
     # Filter the anomalies using one of the thresholding functions if applicable
     if(threshold != "None"){
-      threshold <- round(threshold / 100)
-
-      if(threshold > 0){
+      if(threshold == 'med_max'){
+        thresh <- median(periodic_maxs)
+        anoms <- subset(anoms, anoms[[2]] >= thresh)
+      }else if(threshold == '-med_max'){
+        thresh <- median(periodic_maxs)
+        anoms <- subset(anoms, anoms[[2]] <= thresh)
+      }else if(threshold > 0){
+        # Convert percent to decimal
+        threshold <- round(threshold / 100, 2)
         # Calculate daily max values
         periodic_maxs <- tapply(x[[2]],as.Date(x[[1]]),FUN=max)
         # Calculate the threshold set by the user
         thresh <- quantile(periodic_maxs, threshold)
         # Remove any anoms below the threshold
         anoms <- subset(anoms, anoms[[2]] >= thresh)
-        }
-        
-        if(threshold < 0){
+      }else if(threshold < 0){
+        # Convert percent to decimal
+        threshold <- round(threshold / 100, 2)
         # Calculate daily max values
         periodic_mins <- tapply(x[[2]],as.Date(x[[1]]),FUN=min)
         # Calculate the threshold set by the user
         thresh <- quantile(periodic_mins, abs(threshold))
-        }
         # Remove any anoms above the threshold
         anoms <- subset(anoms, anoms[[2]] <= thresh)
+      }
     }
     all_anoms <- rbind(all_anoms, anoms)
     seasonal_plus_trend <- rbind(seasonal_plus_trend, data_decomp)
