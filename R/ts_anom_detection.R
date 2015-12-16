@@ -259,9 +259,9 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
         if(threshold == '-med_max'){
           thresh <- median(periodic_maxs)
         }else if (threshold == '-p95'){
-          thresh <- quantile(periodic_maxs, .95)
+          thresh <- quantile(periodic_maxs, .05)
         }else if (threshold == '-p99'){
-          thresh <- quantile(periodic_maxs, .99)
+          thresh <- quantile(periodic_maxs, .01)
         }
         # Remove any anoms above the threshold
         anoms <- subset(anoms, anoms[[2]] <= thresh)
