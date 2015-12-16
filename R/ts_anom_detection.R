@@ -244,7 +244,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
     if(threshold != "None"){
       # Calculate daily max values
       periodic_maxs <- tapply(x[[2]],as.Date(x[[1]]),FUN=max)
-      if(substr(threshold, 1, 1) != '-'){
+      if(direction != 'neg'){
         # Calculate the threshold set by the user
         if(threshold == 'med_max'){
           thresh <- median(periodic_maxs)
