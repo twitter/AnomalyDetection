@@ -13,7 +13,7 @@
 #' @param only_last Find and report anomalies only within the last day or hr in the time series.
 #' \code{NULL | 'day' | 'hr'}.
 #' @param threshold Only report positive going anoms above the threshold specified. Options are:
-#' \code{None | med_max | -med_max | 0 < threshold < 100 where threshold is an integer.}.
+#' \code{None | med_max | p95 | p99 | -med_max | -p95 | -p99.}.
 #' @param e_value Add an additional column to the anoms output containing the expected value.
 #' @param longterm Increase anom detection efficacy for time series that are greater than a month.
 #' See Details below.
@@ -113,8 +113,8 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   if(!is.null(only_last) && !only_last %in% c('day','hr')){
     stop("only_last must be either 'day' or 'hr'")
   }
-  if(!threshold %in% c('None','med_max','p95','p99', '-med_max','-p95','-p99')){{
-    stop("threshold options are: None | med_max | -med_max | 0 < threshold < 100 where threshold is an integer.")
+  if(!threshold %in% c('None','med_max','p95','p99', '-med_max','-p95','-p99')){
+    stop("threshold options are: None | med_max | p95 | p99 | -med_max | -p95 | -p99.")
   }
   if(!is.logical(e_value)){
     stop("e_value must be either TRUE (T) or FALSE (F)")
