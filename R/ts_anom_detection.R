@@ -12,7 +12,7 @@
 #' @param alpha The level of statistical significance with which to accept or reject anomalies.
 #' @param only_last Find and report anomalies only within the last day or hr in the time series.
 #' \code{NULL | 'day' | 'hr'}.
-#' @param threshold Only report positive going anoms above the threshold specified. Options are:
+#' @param threshold Only report positive or negative going anoms above the threshold specified. Options are:
 #' \code{None | med_max | p95 | p99 | -med_max | -p95 | -p99.}.
 #' @param e_value Add an additional column to the anoms output containing the expected value.
 #' @param longterm Increase anom detection efficacy for time series that are greater than a month.
@@ -113,8 +113,8 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   if(!is.null(only_last) && !only_last %in% c('day','hr')){
     stop("only_last must be either 'day' or 'hr'")
   }
-  if(!threshold %in% c('None','med_max','p95','p99', '-med_max','-p95','-p99')){
-    stop("threshold options are: None | med_max | p95 | p99 | -med_max | -p95 | -p99.")
+  if(!threshold %in% c('None','med_max','p95','p99', '-med_max','-p80','-p95','-p99')){
+    stop("threshold options are: None | med_max | p95 | p99 | -med_max | -p80 | -p95 | -p99.")
   }
   if(!is.logical(e_value)){
     stop("e_value must be either TRUE (T) or FALSE (F)")
@@ -242,7 +242,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
 
     # Filter the anomalies using one of the thresholding functions if applicable
     if(threshold != "None"){
-      if(direction != 'neg'){
+      if(substr(threshold, 1, 1) != '-'){      
         # Calculate daily max values
         periodic_maxs <- tapply(x[[2]],as.Date(x[[1]]),FUN=max)
         # Calculate the threshold set by the user
@@ -257,13 +257,15 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
         anoms <- subset(anoms, anoms[[2]] >= thresh)
       }else{
         # Calculate daily min values
-        periodic_mins <- tapply(x[[2]],as.Date(x[[1]]),FUN=min)
-        if(threshold == 'med_max'){
-          thresh <- median(periodic_mins)
-        }else if (threshold == 'p95'){
-          thresh <- quantile(periodic_mins, .05)
-        }else if (threshold == 'p99'){
-          thresh <- quantile(periodic_mins, .01)
+        periodic_maxs <- tapply(x[[2]],as.Date(x[[1]]),FUN=min)
+        if(threshold == '-med_max'){
+          thresh <- median(periodic_maxs)
+        }else if (threshold == '-p80'){
+          thresh <- quantile(periodic_maxs, .20)
+        }else if (threshold == '-p95'){
+          thresh <- quantile(periodic_maxs, .05)
+        }else if (threshold == '-p99'){
+          thresh <- quantile(periodic_maxs, .01)
         }
         # Remove any anoms above the threshold
         anoms <- subset(anoms, anoms[[2]] <= thresh)
