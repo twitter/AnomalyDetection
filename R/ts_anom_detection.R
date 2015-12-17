@@ -113,8 +113,8 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   if(!is.null(only_last) && !only_last %in% c('day','hr')){
     stop("only_last must be either 'day' or 'hr'")
   }
-  if(!threshold %in% c('None','med_max','p95','p99')){
-    stop("threshold options are: None | med_max | p95 | p99.")
+  if(!threshold %in% c('None','med_max','p95','p99', '-med_max','-p15','-p10','-p05')){
+    stop("threshold options are: None | med_max | p95 | p99 | -med_max | -p15 | -p10 | -p05.")
   }
   if(!is.logical(e_value)){
     stop("e_value must be either TRUE (T) or FALSE (F)")
@@ -242,19 +242,34 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
 
     # Filter the anomalies using one of the thresholding functions if applicable
     if(threshold != "None"){
-      # Calculate daily max values
-      periodic_maxs <- tapply(x[[2]],as.Date(x[[1]]),FUN=max)
-
-      # Calculate the threshold set by the user
-      if(threshold == 'med_max'){
-        thresh <- median(periodic_maxs)
-      }else if (threshold == 'p95'){
-        thresh <- quantile(periodic_maxs, .95)
-      }else if (threshold == 'p99'){
-        thresh <- quantile(periodic_maxs, .99)
+      if(substr(threshold, 1, 1) != '-'){      
+        # Calculate daily max values
+        periodic_maxs <- tapply(x[[2]],as.Date(x[[1]]),FUN=max)
+        # Calculate the threshold set by the user
+        if(threshold == 'med_max'){
+          thresh <- median(periodic_maxs)
+        }else if (threshold == 'p95'){
+          thresh <- quantile(periodic_maxs, .95)
+        }else if (threshold == 'p99'){
+          thresh <- quantile(periodic_maxs, .99)
+        }
+        # Remove any anoms below the threshold
+        anoms <- subset(anoms, anoms[[2]] >= thresh)
+      }else{
+        # Calculate daily min values
+        periodic_maxs <- tapply(x[[2]],as.Date(x[[1]]),FUN=min)
+        if(threshold == '-med_max'){
+          thresh <- median(periodic_maxs)
+        }else if (threshold == '-p15'){
+          thresh <- quantile(periodic_maxs, .15)
+        }else if (threshold == '-p10'){
+          thresh <- quantile(periodic_maxs, .10)
+        }else if (threshold == '-p05'){
+          thresh <- quantile(periodic_maxs, .05)
+        }
+        # Remove any anoms above the threshold
+        anoms <- subset(anoms, anoms[[2]] <= thresh)
       }
-      # Remove any anoms below the threshold
-      anoms <- subset(anoms, anoms[[2]] >= thresh)
     }
     all_anoms <- rbind(all_anoms, anoms)
     seasonal_plus_trend <- rbind(seasonal_plus_trend, data_decomp)
