@@ -12,8 +12,8 @@
 #' @param alpha The level of statistical significance with which to accept or reject anomalies.
 #' @param only_last Find and report anomalies only within the last day or hr in the time series.
 #' \code{NULL | 'day' | 'hr'}.
-#' @param threshold Only report positive or negative going anoms above or below the threshold specified. Options are:
-#' \code{None | med_max | p95 | p99 | -med_max | -p15 | -p10 | -p05.}.
+#' @param threshold Only report positive going anoms above the threshold specified. Options are:
+#' \code{'None' | 'med_max' | 'p95' | 'p99'}.
 #' @param e_value Add an additional column to the anoms output containing the expected value.
 #' @param longterm Increase anom detection efficacy for time series that are greater than a month.
 #' See Details below.
