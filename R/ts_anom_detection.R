@@ -162,7 +162,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   }
 
   # Aggregate data to minutely if secondly
-  if(gran == "sec"){
+  if(gran == "sec" || gran == "ms"){
     x <- format_timestamp(aggregate(x[2], format(x[1], "%Y-%m-%d %H:%M:00"), eval(parse(text="sum"))))
   }
 
