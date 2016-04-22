@@ -162,15 +162,19 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   }
 
   # Aggregate data to minutely if secondly
-  if(gran == "sec"){
+  if(gran == "sec" || gran == "ms"){
     x <- format_timestamp(aggregate(x[2], format(x[1], "%Y-%m-%d %H:%M:00"), eval(parse(text="sum"))))
   }
 
+  ## This is a bit tricky, since the number of samples really isn't guaranteed to be 1 measurement per whatever the 'gran' variable says it is.
+  ## Either we'll need to do something smarter (look at the delta between the first and the last timestamp and count the number of rows) or
+  ## alternatively, simply make 'period' a function argument and use these values as defaults.
   period = switch(gran,
                   min = 1440,
+                  ms = 1000,
+                  sec = 60*60,
                   hr = 24,
-                  # if the data is daily, then we need to bump the period to weekly to get multiple examples
-                  day = 7)
+                  day = 7) # if the data is daily, then we need to bump the period to weekly to get multiple examples
   num_obs <- length(x[[2]])
 
   if(max_anoms < 1/num_obs){
