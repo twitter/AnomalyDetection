@@ -87,7 +87,7 @@ detect_anoms <- function(data, k = 0.49, alpha = 0.05, num_obs_per_period = NULL
 
         # protect against constant time series
         data_sigma <- func_sigma(data[[2L]])
-        if(data_sigma == 0) 
+        if(is.na(data_sigma) || data_sigma == 0) 
             break
 
         ares <- ares/data_sigma
