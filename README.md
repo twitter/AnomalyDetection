@@ -91,7 +91,7 @@ anomalies that occurred during the last day or last hour. Execute the following
 command:
 
 ```
-res = AnomalyDetectionTs(raw_data, max_anoms=0.02, direction='both', only_last=”day”, plot=TRUE)
+res = AnomalyDetectionTs(raw_data, max_anoms=0.02, direction='both', only_last='day', plot=TRUE)
 res$plot
 ```
 
