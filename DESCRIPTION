@@ -16,3 +16,4 @@ Suggests: testthat
 License: GPL-3
 LazyData: true
 Packaged: 2014-12-08 07:54:07 UTC; owenvallis
+RoxygenNote: 6.0.1

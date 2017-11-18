@@ -67,14 +67,14 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
                                title = NULL, verbose=FALSE, na.rm = FALSE){
 
   # Check for supported inputs types
-  if(!is.data.frame(x)){
+  if (!is.data.frame(x)) {
     stop("data must be a single data frame.")
   } else {
-    if(ncol(x) != 2 || !is.numeric(x[[2]])){
+    if (ncol(x) != 2 || !is.numeric(x[[2]])) {
       stop("data must be a 2 column data.frame, with the first column being a set of timestamps, and the second coloumn being numeric values.")
     }
     # Format timestamps if necessary
-    if (!(class(x[[1]])[1] == "POSIXlt")) {
+    if (!(class(x[[1]])[1] == "POSIXct")) {
       x <- format_timestamp(x)
     }
   }
@@ -83,13 +83,13 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
     colnames(x) <- c("timestamp", "count")
   }
   
-  if(!is.logical(na.rm)){
+  if (!is.logical(na.rm)) {
     stop("na.rm must be either TRUE (T) or FALSE (F)")
   }
   
   # Deal with NAs in timestamps
-  if(any(is.na(x$timestamp))){
-    if(na.rm){
+  if (any(is.na(x$timestamp))) {
+    if (na.rm) {
       x <- x[-which(is.na(x$timestamp)), ]
     } else {
       stop("timestamp contains NAs, please set na.rm to TRUE or remove the NAs manually.")
@@ -97,53 +97,53 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   }
 
   # Sanity check all input parameters
-  if(max_anoms > .49){
+  if (max_anoms > .49) {
     stop(paste("max_anoms must be less than 50% of the data points (max_anoms =", round(max_anoms*length(x[[2]]), 0), " data_points =", length(x[[2]]),")."))
-  } else if(max_anoms < 0){
+  } else if (max_anoms < 0) {
     stop("max_anoms must be positive.")
-  } else if(max_anoms == 0){
+  } else if (max_anoms == 0) {
     warning("0 max_anoms results in max_outliers being 0.")
   }
-  if(!direction %in% c('pos', 'neg', 'both')){
+  if (!direction %in% c('pos', 'neg', 'both')) {
     stop("direction options are: pos | neg | both.")
   }
-  if(!(0.01 <= alpha || alpha <= 0.1)){
-    if(verbose) message("Warning: alpha is the statistical signifigance, and is usually between 0.01 and 0.1")
+  if (!(0.01 <= alpha || alpha <= 0.1)) {
+    if (verbose) message("Warning: alpha is the statistical signifigance, and is usually between 0.01 and 0.1")
   }
-  if(!is.null(only_last) && !only_last %in% c('day','hr')){
+  if (!is.null(only_last) && !only_last %in% c('day','hr')) {
     stop("only_last must be either 'day' or 'hr'")
   }
-  if(!threshold %in% c('None','med_max','p95','p99')){
+  if (!threshold %in% c('None','med_max','p95','p99')) {
     stop("threshold options are: None | med_max | p95 | p99.")
   }
-  if(!is.logical(e_value)){
+  if (!is.logical(e_value)) {
     stop("e_value must be either TRUE (T) or FALSE (F)")
   }
-  if(!is.logical(longterm)){
+  if (!is.logical(longterm)) {
     stop("longterm must be either TRUE (T) or FALSE (F)")
   }
-  if(piecewise_median_period_weeks < 2){
+  if (piecewise_median_period_weeks < 2) {
     stop("piecewise_median_period_weeks must be at greater than 2 weeks")
   }
-  if(!is.logical(plot)){
+  if (!is.logical(plot)) {
     stop("plot must be either TRUE (T) or FALSE (F)")
   }
-  if(!is.logical(y_log)){
+  if (!is.logical(y_log)) {
     stop("y_log must be either TRUE (T) or FALSE (F)")
   }
-  if(!is.character(xlabel)){
+  if (!is.character(xlabel)) {
     stop("xlabel must be a string")
   }
-  if(!is.character(ylabel)){
+  if (!is.character(ylabel)) {
     stop("ylabel must be a string")
   }
-  if(!is.character(title) && !is.null(title)){
+  if (!is.character(title) && !is.null(title)) {
     stop("title must be a string")
   }
-  if(is.null(title)){
+  if (is.null(title)) {
     title <- ""
   } else {
-    title <- paste(title, " : ", sep="")
+    title <- paste(title, " : ", sep = "")
   }
 
   # -- Main analysis: Perform S-H-ESD
