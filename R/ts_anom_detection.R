@@ -167,6 +167,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   }
 
   period = switch(gran,
+                  sec = 3600,
                   min = 1440,
                   hr = 24,
                   # if the data is daily, then we need to bump the period to weekly to get multiple examples
