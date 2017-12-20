@@ -83,6 +83,9 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
     colnames(x) <- c("timestamp", "count")
   }
   
+  # extract original timezone attr
+  tz <- attr(x$timestamp, "tzone")
+  
   if (!is.logical(na.rm)) {
     stop("na.rm must be either TRUE (T) or FALSE (F)")
   }
@@ -323,7 +326,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
       week_rng <- get_range(x_subset_week, index = 2, y_log = y_log)
       day_rng <- get_range(x_subset_single_day, index = 2, y_log = y_log)
       yrange <- c(min(week_rng[1], day_rng[1]), max(week_rng[2], day_rng[2]))
-      xgraph <- add_day_labels_datetime(xgraph, breaks = breaks, start = as.POSIXlt(min(x_subset_week[[1]]), tz = "UTC"), end = as.POSIXlt(max(x_subset_single_day[[1]]), tz = "UTC"), days_per_line = num_days_per_line)
+      xgraph <- add_day_labels_datetime(xgraph, breaks = breaks, start = as.POSIXlt(min(x_subset_week[[1]]), tz = tz), end = as.POSIXlt(max(x_subset_single_day[[1]]), tz = tz), days_per_line = num_days_per_line)
       xgraph <- xgraph + 
         ggplot2::labs(x = xlabel, y = ylabel, title = plot_title)
     } else {
@@ -337,7 +340,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
         ggplot2::geom_line(data = x, ggplot2::aes_string(colour = color_name), alpha = alpha)
       yrange <- get_range(x, index = 2, y_log = y_log)
       xgraph <- xgraph + 
-        ggplot2::scale_x_datetime(labels = function(x) ifelse(as.POSIXlt(x, tz = "UTC")$hour != 0, strftime(x, format = "%kh", tz = "UTC"), strftime(x, format = "%b %e", tz = "UTC")),
+        ggplot2::scale_x_datetime(labels = function(x) ifelse(as.POSIXlt(x, tz = tz)$hour != 0, strftime(x, format = "%kh", tz = tz), strftime(x, format = "%b %e", tz = tz)),
                                                   expand = c(0,0))
       xgraph <- xgraph + 
         ggplot2::labs(x = xlabel, y = ylabel, title = plot_title)
@@ -363,15 +366,14 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   # Store expected values if set by user
   if (e_value) {
     anoms <- data.frame(timestamp = all_anoms[[1]], anoms = all_anoms[[2]], 
-                        expected_value = subset(seasonal_plus_trend[[2]], as.POSIXlt(seasonal_plus_trend[[1]], tz = "UTC") %in% all_anoms[[1]]),
+                        expected_value = subset(seasonal_plus_trend[[2]], as.POSIXlt(seasonal_plus_trend[[1]], tz = tz) %in% all_anoms[[1]]),
                         stringsAsFactors = FALSE)
   } else {
     anoms <- data.frame(timestamp = all_anoms[[1]], anoms = all_anoms[[2]], stringsAsFactors = FALSE)
   }
 
   # Make sure we're still a valid POSIXct datetime.
-  # TODO: Make sure we keep original datetime format and timezone.
-  anoms$timestamp <- as.POSIXct(anoms$timestamp, tz = "UTC")
+  anoms$timestamp <- as.POSIXct(anoms$timestamp, tz = tz)
 
   # Lastly, return anoms and optionally the plot if requested by the user
   if (plot) {
