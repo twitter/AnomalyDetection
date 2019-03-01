@@ -168,6 +168,7 @@ AnomalyDetectionTs <- function(x, max_anoms = 0.10, direction = 'pos',
   if (gran == "sec") {
     x <- format_timestamp(aggregate(x[2], format(x[1], "%Y-%m-%d %H:%M:00"), 
                                     eval(parse(text = "sum"))))
+    gran <- "min"
   }
 
   period = switch(gran,
