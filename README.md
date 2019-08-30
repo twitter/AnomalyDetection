@@ -61,7 +61,7 @@ help(AnomalyDetectionVec)
 ## A simple example
 
 To get started, the user is recommended to use the example dataset which comes
-with the packages. Execute the following commands:
+with the package. Execute the following commands:
 
 ```
 data(raw_data)
